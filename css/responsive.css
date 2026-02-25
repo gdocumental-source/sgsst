@@ -1,0 +1,76 @@
+@media (max-width: 1024px) {
+    .menu-grid {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+
+    .header {
+        flex-direction: column;
+        gap: var(--spacing-lg);
+    }
+}
+
+@media (max-width: 768px) {
+    body {
+        font-size: 14px;
+    }
+
+    .main-app {
+        padding: var(--spacing-lg);
+    }
+
+    .login-box {
+        padding: var(--spacing-2xl);
+    }
+
+    .menu-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .header {
+        flex-direction: column;
+        padding: var(--spacing-lg);
+    }
+
+    .user-info {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .panel-content {
+        padding: var(--spacing-lg);
+    }
+
+    .modal-content {
+        padding: var(--spacing-xl);
+    }
+
+    h1 { font-size: var(--font-size-2xl); }
+    h2 { font-size: var(--font-size-xl); }
+}
+
+@media (max-width: 480px) {
+    .main-app {
+        padding: var(--spacing-md);
+    }
+
+    .login-box {
+        padding: var(--spacing-lg);
+    }
+
+    .btn {
+        padding: var(--spacing-sm) var(--spacing-md);
+        font-size: var(--font-size-sm);
+    }
+
+    .modal-footer {
+        flex-direction: column;
+    }
+
+    .modal-footer .btn {
+        width: 100%;
+    }
+
+    .menu-icon {
+        font-size: 48px;
+    }
+}

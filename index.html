@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SG-SST - Sistema de Gestión en Seguridad y Salud en el Trabajo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            max-width: 450px;
+            width: 100%;
+            box-shadow: 0 25px 70px rgba(0,0,0,0.3);
+        }
+
+        .logo-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            font-size: 64px;
+            margin-bottom: 15px;
+        }
+
+        h1 {
+            font-size: 32px;
+            margin: 0 0 10px 0;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        h2 {
+            font-size: 20px;
+            color: #2c3e50;
+            margin: 0 0 20px 0;
+        }
+
+        .subtitle {
+            color: #95a5a6;
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #2c3e50;
+            font-size: 14px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+            box-sizing: border-box;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+            margin-bottom: 12px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: #f8f9fa;
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .button-group button {
+            flex: 1;
+            margin-bottom: 0;
+            padding: 8px;
+            font-size: 12px;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 5px solid;
+            display: none;
+            font-size: 14px;
+        }
+
+        .alert.show {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        .alert-success {
+            background: #d1fae5;
+            color: #065f46;
+            border-color: #10b981;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border-color: #ef4444;
+        }
+
+        .alert-warning {
+            background: #fef3cd;
+            color: #856404;
+            border-color: #ffc107;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .loader {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .loader.show {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .welcome {
+            text-align: center;
+            color: white;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .welcome h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            -webkit-text-fill-color: white;
+            color: white;
+            background: none;
+        }
+
+        .welcome p {
+            font-size: 16px;
+            margin: 10px 0;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .welcome button {
+            background: white;
+            color: #667eea;
+            margin-top: 30px;
+        }
+
+        .error-box {
+            background: #fee2e2;
+            color: #991b1b;
+            text-align: center;
+        }
+
+        .error-box h1 {
+            background: none;
+            color: #991b1b;
+            -webkit-text-fill-color: #991b1b;
+            font-size: 36px;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script>
+        // ============================================
+        // ESTADO GLOBAL
+        // ============================================
+        let auth = null;
+        let db = null;
+        let currentUser = null;
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyC57wX-bhIEoZuO7g-Kn52NwStMHwf-dWA",
+            authDomain: "sgsst-reservas.firebaseapp.com",
+            projectId: "sgsst-reservas",
+            storageBucket: "sgsst-reservas.firebasestorage.app",
+            messagingSenderId: "8497409289",
+            appId: "1:8497409289:web:7f43df201769666d58f7d8"
+        };
+
+        console.log('🚀 Iniciando aplicación SG-SST...');
+
+        // ============================================
+        // FUNCIONES DE RENDER
+        // ============================================
+
+        function renderLoading() {
+            const root = document.getElementById('root');
+            root.innerHTML = `
+                <div class="container" style="text-align: center;">
+                    <div class="logo">🛡️</div>
+                    <h1>SG-SST</h1>
+                    <p style="color: #95a5a6; margin: 20px 0;">Cargando...</p>
+                    <div class="spinner" style="margin: 20px auto;"></div>
+                </div>
+            `;
+        }
+
+        function renderError(mensaje) {
+            const root = document.getElementById('root');
+            root.innerHTML = `
+                <div class="container error-box">
+                    <h1>❌</h1>
+                    <h2>Error</h2>
+                    <p>${mensaje}</p>
+                    <button class="btn-primary" onclick="location.reload()" style="background: #667eea; color: white; margin-top: 20px;">
+                        Reintentar
+                    </button>
+                </div>
+            `;
+        }
+
+        function renderLogin() {
+            const root = document.getElementById('root');
+            root.innerHTML = `
+                <div class="container">
+                    <div class="logo-section">
+                        <div class="logo">🛡️</div>
+                        <h1>SG-SST</h1>
+                        <p class="subtitle">Sistema de Gestión en Seguridad y Salud en el Trabajo</p>
+                    </div>
+
+                    <div id="alert" class="alert"></div>
+
+                    <div id="loginForm">
+                        <div class="form-group">
+                            <label for="emailLogin">📧 Email</label>
+                            <input type="email" id="emailLogin" placeholder="tu@email.com" autocomplete="email">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="passwordLogin">🔒 Contraseña</label>
+                            <input type="password" id="passwordLogin" placeholder="••••••••" autocomplete="current-password">
+                        </div>
+
+                        <button class="btn-primary" onclick="handleLoginEmail()">Iniciar Sesión</button>
+                        <button class="btn-secondary" onclick="handleLoginGoogle()">🔗 Iniciar con Google</button>
+
+                        <div class="button-group">
+                            <button class="btn-secondary" onclick="handleForgotPassword()">¿Olvidaste?</button>
+                            <button class="btn-primary" onclick="showRegister()">Crear Cuenta</button>
+                        </div>
+                    </div>
+
+                    <div id="registerForm" class="hidden">
+                        <h2>Crear Cuenta</h2>
+
+                        <div class="form-group">
+                            <label for="nombreRegistro">👤 Nombre</label>
+                            <input type="text" id="nombreRegistro" placeholder="Tu Nombre">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="emailRegistro">📧 Email</label>
+                            <input type="email" id="emailRegistro" placeholder="tu@email.com">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="passwordRegistro">🔒 Contraseña</label>
+                            <input type="password" id="passwordRegistro" placeholder="Mínimo 6 caracteres">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="passwordConfirm">🔒 Confirmar</label>
+                            <input type="password" id="passwordConfirm" placeholder="Repite tu contraseña">
+                        </div>
+
+                        <button class="btn-primary" onclick="handleRegister()">Registrarse</button>
+                        <button class="btn-secondary" onclick="showLogin()">Volver al Login</button>
+                    </div>
+
+                    <div id="loader" class="loader">
+                        <div class="spinner"></div>
+                        <p style="color: #95a5a6; margin-top: 15px;">Procesando...</p>
+                    </div>
+                </div>
+            `;
+
+            // Setup password enter
+            const passwordLogin = document.getElementById('passwordLogin');
+            if (passwordLogin) {
+                passwordLogin.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') handleLoginEmail();
+                });
+            }
+        }
+
+        function renderWelcome(user) {
+            const root = document.getElementById('root');
+            root.innerHTML = `
+                <div class="container welcome">
+                    <h1>🎉</h1>
+                    <h1>¡Bienvenido!</h1>
+                    <p style="font-size: 18px; margin: 20px 0;"><strong>${user.email}</strong></p>
+                    <p>Nombre: <strong>${user.displayName || 'Usuario'}</strong></p>
+                    <p style="margin-top: 30px; font-size: 14px;">La aplicación está en desarrollo...</p>
+                    <button class="btn-primary" onclick="handleLogout()">Cerrar Sesión</button>
+                </div>
+            `;
+        }
+
+        // ============================================
+        // FUNCIONES DE UI
+        // ============================================
+
+        function showAlert(mensaje, tipo = 'info') {
+            const alertEl = document.getElementById('alert');
+            if (!alertEl) return;
+
+            const icons = {
+                success: '✓',
+                error: '✕',
+                warning: '⚠',
+                info: 'ℹ'
+            };
+
+            alertEl.className = `alert show alert-${tipo}`;
+            alertEl.innerHTML = `<strong>${icons[tipo]}</strong> ${mensaje}`;
+
+            setTimeout(() => {
+                alertEl?.classList.remove('show');
+            }, 4000);
+        }
+
+        function showLoader(show) {
+            const loader = document.getElementById('loader');
+            if (loader) {
+                loader.classList.toggle('show', show);
+            }
+            const buttons = document.querySelectorAll('button');
+            buttons.forEach(btn => btn.disabled = show);
+        }
+
+        function showLogin() {
+            document.getElementById('loginForm')?.classList.remove('hidden');
+            document.getElementById('registerForm')?.classList.add('hidden');
+        }
+
+        function showRegister() {
+            document.getElementById('loginForm')?.classList.add('hidden');
+            document.getElementById('registerForm')?.classList.remove('hidden');
+        }
+
+        function getErrorMessage(code) {
+            const messages = {
+                'auth/invalid-email': 'Email inválido',
+                'auth/user-disabled': 'Cuenta deshabilitada',
+                'auth/user-not-found': 'Usuario no encontrado',
+                'auth/wrong-password': 'Contraseña incorrecta',
+                'auth/email-already-in-use': 'Email ya registrado',
+                'auth/weak-password': 'Contraseña muy débil',
+                'auth/network-request-failed': 'Error de conexión',
+                'auth/too-many-requests': 'Demasiados intentos',
+                'auth/popup-blocked': 'Popup bloqueado'
+            };
+            return messages[code] || 'Error: ' + code;
+        }
+
+        // ============================================
+        // HANDLERS
+        // ============================================
+
+        async function handleLoginEmail() {
+            const email = document.getElementById('emailLogin')?.value?.trim();
+            const password = document.getElementById('passwordLogin')?.value;
+
+            if (!email || !password) {
+                showAlert('Completa email y contraseña', 'warning');
+                return;
+            }
+
+            showLoader(true);
+            try {
+                await auth.signInWithEmailAndPassword(email, password);
+                showAlert('¡Login exitoso!', 'success');
+            } catch (error) {
+                showAlert(getErrorMessage(error.code), 'error');
+                console.error('Login error:', error);
+            } finally {
+                showLoader(false);
+            }
+        }
+
+        async function handleLoginGoogle() {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            showLoader(true);
+            try {
+                await auth.signInWithPopup(provider);
+                showAlert('¡Login con Google exitoso!', 'success');
+            } catch (error) {
+                showAlert(getErrorMessage(error.code), 'error');
+                console.error('Google login error:', error);
+            } finally {
+                showLoader(false);
+            }
+        }
+
+        async function handleRegister() {
+            const nombre = document.getElementById('nombreRegistro')?.value?.trim();
+            const email = document.getElementById('emailRegistro')?.value?.trim();
+            const password = document.getElementById('passwordRegistro')?.value;
+            const confirmPassword = document.getElementById('passwordConfirm')?.value;
+
+            if (!nombre || !email || !password || !confirmPassword) {
+                showAlert('Completa todos los campos', 'warning');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                showAlert('Las contraseñas no coinciden', 'warning');
+                return;
+            }
+
+            if (password.length < 6) {
+                showAlert('La contraseña debe tener mínimo 6 caracteres', 'warning');
+                return;
+            }
+
+            showLoader(true);
+            try {
+                const result = await auth.createUserWithEmailAndPassword(email, password);
+                await result.user.updateProfile({ displayName: nombre });
+                await db.collection('usuarios').doc(result.user.uid).set({
+                    nombre: nombre,
+                    email: email,
+                    fechaCreacion: new Date()
+                });
+
+                showAlert('¡Cuenta creada! Ahora inicia sesión.', 'success');
+                setTimeout(() => {
+                    document.getElementById('nombreRegistro').value = '';
+                    document.getElementById('emailRegistro').value = '';
+                    document.getElementById('passwordRegistro').value = '';
+                    document.getElementById('passwordConfirm').value = '';
+                    showLogin();
+                }, 1500);
+            } catch (error) {
+                showAlert(getErrorMessage(error.code), 'error');
+                console.error('Register error:', error);
+            } finally {
+                showLoader(false);
+            }
+        }
+
+        async function handleForgotPassword() {
+            const email = document.getElementById('emailLogin')?.value?.trim();
+            if (!email) {
+                showAlert('Ingresa tu email primero', 'warning');
+                return;
+            }
+
+            showLoader(true);
+            try {
+                await auth.sendPasswordResetEmail(email);
+                showAlert('Email enviado. Revisa tu bandeja.', 'success');
+            } catch (error) {
+                showAlert(getErrorMessage(error.code), 'error');
+            } finally {
+                showLoader(false);
+            }
+        }
+
+        async function handleLogout() {
+            try {
+                await auth.signOut();
+                showAlert('Sesión cerrada', 'success');
+            } catch (error) {
+                showAlert('Error al cerrar sesión', 'error');
+            }
+        }
+
+        // ============================================
+        // INICIALIZACIÓN
+        // ============================================
+
+        function initApp() {
+            if (typeof firebase === 'undefined') {
+                renderError('Firebase no está disponible. Verifica tu conexión a Internet.');
+                return;
+            }
+
+            try {
+                firebase.initializeApp(firebaseConfig);
+                auth = firebase.auth();
+                db = firebase.firestore();
+                console.log('✅ Firebase inicializado');
+
+                auth.onAuthStateChanged(user => {
+                    currentUser = user;
+                    if (user) {
+                        renderWelcome(user);
+                    } else {
+                        renderLogin();
+                    }
+                });
+            } catch (error) {
+                console.error('Error inicializando:', error);
+                renderError('Error al inicializar: ' + error.message);
+            }
+        }
+
+        // Esperar a Firebase
+        renderLoading();
+        let attempts = 0;
+        const checkFirebase = setInterval(() => {
+            attempts++;
+            if (typeof firebase !== 'undefined') {
+                clearInterval(checkFirebase);
+                initApp();
+            } else if (attempts > 30) {
+                clearInterval(checkFirebase);
+                renderError('Firebase no pudo cargar. Verifica tu conexión a Internet.');
+            }
+        }, 100);
+    </script>
+
+    <!-- Firebase SDK - ÚNICO SCRIPT EXTERNO -->
+    <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"></script>
+</body>
+</html>
