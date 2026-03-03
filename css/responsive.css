@@ -1,76 +1,82 @@
-@media (max-width: 1024px) {
-    .menu-grid {
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    }
-
-    .header {
-        flex-direction: column;
-        gap: var(--spacing-lg);
-    }
-}
-
 @media (max-width: 768px) {
-    body {
-        font-size: 14px;
-    }
-
     .main-app {
-        padding: var(--spacing-lg);
+        padding: 15px;
     }
 
-    .login-box {
-        padding: var(--spacing-2xl);
+    .panel-content {
+        padding: 25px;
     }
 
-    .menu-grid {
+    .form-grid {
         grid-template-columns: 1fr;
     }
 
     .header {
+        padding: 20px;
+    }
+
+    .header-left {
         flex-direction: column;
-        padding: var(--spacing-lg);
+        text-align: center;
+        gap: 10px;
     }
 
     .user-info {
-        width: 100%;
-        justify-content: space-between;
+        flex-direction: column;
+        text-align: center;
     }
 
-    .panel-content {
-        padding: var(--spacing-lg);
+    .menu-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .menu-card {
+        padding: 30px 20px;
+    }
+
+    .empresa-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .empresa-info {
+        width: 100%;
+    }
+
+    .empresa-actions {
+        width: 100%;
+        justify-content: flex-start;
     }
 
     .modal-content {
-        padding: var(--spacing-xl);
-    }
-
-    h1 { font-size: var(--font-size-2xl); }
-    h2 { font-size: var(--font-size-xl); }
-}
-
-@media (max-width: 480px) {
-    .main-app {
-        padding: var(--spacing-md);
-    }
-
-    .login-box {
-        padding: var(--spacing-lg);
-    }
-
-    .btn {
-        padding: var(--spacing-sm) var(--spacing-md);
-        font-size: var(--font-size-sm);
+        padding: 30px 20px;
     }
 
     .modal-footer {
         flex-direction: column;
     }
 
-    .modal-footer .btn {
+    .modal-footer button {
         width: 100%;
     }
 
-    .menu-icon {
-        font-size: 48px;
+    .panel-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .panel-header h2 {
+        font-size: 24px;
+    }
+
+    .diagnostico-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .diagnostico-actions {
+        width: 100%;
+        justify-content: flex-start;
     }
 }

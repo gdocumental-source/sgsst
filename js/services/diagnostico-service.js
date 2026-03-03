@@ -1,401 +1,140 @@
+// js/services/diagnostico-service.js
+
 /**
- * Servicio de Diagnósticos
- * Maneja creación, actualización y cálculo de resultados de diagnósticos
+ * Servicios para gestión de diagnósticos
  */
 
-import { alertService } from '../ui/alerts.js';
-import { TIPOS_DIAGNOSTICO, ESTADOS_PROCESO } from '../config/constants.js';
+import { 
+    db,
+    crearDiagnostico as firebaseCrearDiagnostico,
+    obtenerDiagnosticosDelUsuario as firebaseObtenerDiagnosticos,
+    obtenerCitasHoyDelUsuario as firebaseObtenerCitasHoy,
+    actualizarEstadoDiagnostico as firebaseActualizarEstado,
+    guardarRespuestasDiagnostico as firebaseGuardarRespuestas,
+    escucharDiagnosticosDelUsuario as firebaseEscucharDiagnosticos,
+    obtenerDiagnosticosActivosPorEmpresa as firebaseObtenerActivos,
+    reagendarDiagnostico as firebaseReagendar,
+    aprobarReagendamiento as firebaseAprobar,
+    rechazarReagendamiento as firebaseRechazar
+} from '../config/firebase-config.js';
 
-export class DiagnosticoService {
-    constructor(firebaseAuth) {
-        this.auth = firebaseAuth;
-        this.db = firebase.firestore();
+import { collection, query, where, getDocs, updateDoc, doc, deleteDoc } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
+import { ESTADOS_PROCESO } from '../config/constants.js';
+import { showAlert } from '../ui/alerts.js';
+
+// Re-exportar funciones de Firebase
+export const crearDiagnostico = firebaseCrearDiagnostico;
+export const obtenerDiagnosticosDelUsuario = firebaseObtenerDiagnosticos;
+export const obtenerCitasHoyDelUsuario = firebaseObtenerCitasHoy;
+export const actualizarEstadoDiagnostico = firebaseActualizarEstado;
+export const guardarRespuestasDiagnostico = firebaseGuardarRespuestas;
+export const escucharDiagnosticosDelUsuario = firebaseEscucharDiagnosticos;
+export const obtenerDiagnosticosActivosPorEmpresa = firebaseObtenerActivos;
+export const reagendarDiagnostico = firebaseReagendar;
+export const aprobarReagendamiento = firebaseAprobar;
+export const rechazarReagendamiento = firebaseRechazar;
+
+/**
+ * Crea una cita de entrega de resultados
+ * @param {string} diagnosticoOriginalId - ID del diagnóstico completado
+ * @param {string} nuevaFecha - Fecha de entrega
+ * @param {string} nuevaHora - Hora de entrega
+ * @returns {Promise}
+ */
+export async function crearCitaEntregaResultados(diagnosticoOriginalId, nuevaFecha, nuevaHora, empresas, diagnosticos) {
+    const diagnosticoOriginal = diagnosticos.find(d => d.id === diagnosticoOriginalId);
+    if (!diagnosticoOriginal) {
+        return { success: false, error: 'Diagnóstico original no encontrado' };
     }
 
-    /**
-     * Crear nuevo diagnóstico
-     */
-    async crearDiagnostico(diagnosticoData) {
-        try {
-            const userId = this.auth.currentUser.uid;
+    const empresaData = empresas.find(e => e.id === diagnosticoOriginal.empresaId);
+    
+    const citaEntrega = {
+        empresaId: diagnosticoOriginal.empresaId,
+        empresaNombre: diagnosticoOriginal.empresaNombre,
+        ordenServicio: 'ENTREGA-' + diagnosticoOriginal.ordenServicio,
+        titulo: '📦 Entrega de Resultados - ' + diagnosticoOriginal.ordenServicio,
+        fechaAgendada: nuevaFecha,
+        horaAgendada: nuevaHora,
+        tipoServicio: 'entrega-resultados',
+        diagnosticoOriginalId: diagnosticoOriginalId,
+        notas: 'Cita para entrega de resultados del diagnóstico realizado el ' + diagnosticoOriginal.fechaAgendada,
+        estado: ESTADOS_PROCESO.ENTREGA_AGENDADA
+    };
 
-            const diagnostico = {
-                empresaId: diagnosticoData.empresaId,
-                tipo: diagnosticoData.tipo, // '7s', '21s', '60s'
-                estado: ESTADOS_PROCESO.SIN_AGENDAR,
-                respuestas: diagnosticoData.respuestas || {},
-                puntuacion: 0,
-                porcentajeAvance: 0,
-                resultado: null, // Se calcula al completar
-                createdBy: userId,
-                createdAt: new Date(),
-                updatedAt: new Date(),
-                completadoEn: null,
-                fechaAgendada: null,
-                horaAgendada: null,
-                notasObservaciones: ''
-            };
-
-            const docRef = await this.db.collection('diagnosticos').add(diagnostico);
-            
-            alertService.success('Diagnóstico creado exitosamente');
-            return { success: true, id: docRef.id, diagnostico };
-
-        } catch (error) {
-            alertService.error(`Error al crear diagnóstico: ${error.message}`);
-            return { success: false, error: error.message };
-        }
+    const resultado = await firebaseCrearDiagnostico(citaEntrega);
+    
+    if (resultado.success) {
+        // Actualizar el diagnóstico original
+        await firebaseActualizarEstado(diagnosticoOriginalId, ESTADOS_PROCESO.ENTREGA_AGENDADA);
     }
+    
+    return resultado;
+}
 
-    /**
-     * Obtener diagnóstico por ID
-     */
-    async obtenerDiagnosticoPorId(diagnosticoId) {
-        try {
-            const doc = await this.db.collection('diagnosticos').doc(diagnosticoId).get();
-
-            if (!doc.exists()) {
-                throw new Error('Diagnóstico no encontrado');
-            }
-
-            return { success: true, diagnostico: { id: doc.id, ...doc.data() } };
-
-        } catch (error) {
-            console.error('Error al obtener diagnóstico:', error);
-            return { success: false, error: error.message };
-        }
-    }
-
-    /**
-     * Obtener todos los diagnósticos de una empresa
-     */
-    async obtenerDiagnosticosPorEmpresa(empresaId) {
-        try {
-            const snapshot = await this.db.collection('diagnosticos')
-                .where('empresaId', '==', empresaId)
-                .orderBy('createdAt', 'desc')
-                .get();
-
-            const diagnosticos = [];
-            snapshot.forEach(doc => {
-                diagnosticos.push({ id: doc.id, ...doc.data() });
-            });
-
-            return { success: true, diagnosticos };
-
-        } catch (error) {
-            console.error('Error al obtener diagnósticos:', error);
-            return { success: false, error: error.message, diagnosticos: [] };
-        }
-    }
-
-    /**
-     * Actualizar respuestas del diagnóstico
-     */
-    async actualizarRespuestas(diagnosticoId, respuestas) {
-        try {
-            const diagnosticoRef = this.db.collection('diagnosticos').doc(diagnosticoId);
-            
-            // Calcular porcentaje de avance
-            const totalPreguntas = Object.keys(respuestas).length;
-            const respondidas = Object.values(respuestas).filter(r => r !== null && r !== undefined).length;
-            const porcentaje = totalPreguntas > 0 ? Math.round((respondidas / totalPreguntas) * 100) : 0;
-
-            await diagnosticoRef.update({
-                respuestas: respuestas,
-                porcentajeAvance: porcentaje,
-                updatedAt: new Date()
-            });
-
-            return { success: true, porcentajeAvance: porcentaje };
-
-        } catch (error) {
-            alertService.error(`Error al actualizar respuestas: ${error.message}`);
-            return { success: false, error: error.message };
-        }
-    }
-
-    /**
-     * Agendar diagnóstico
-     */
-    async agendarDiagnostico(diagnosticoId, fecha, hora) {
-        try {
-            await this.db.collection('diagnosticos').doc(diagnosticoId).update({
-                estado: ESTADOS_PROCESO.DIAGNOSTICO_AGENDADO,
-                fechaAgendada: fecha,
-                horaAgendada: hora,
-                updatedAt: new Date()
-            });
-
-            alertService.success('Diagnóstico agendado exitosamente');
-            return { success: true };
-
-        } catch (error) {
-            alertService.error(`Error al agendar diagnóstico: ${error.message}`);
-            return { success: false, error: error.message };
-        }
-    }
-
-    /**
-     * Completar diagnóstico y calcular resultado
-     */
-    async completarDiagnostico(diagnosticoId, respuestasFinales) {
-        try {
-            // Obtener el diagnóstico
-            const diagDoc = await this.db.collection('diagnosticos').doc(diagnosticoId).get();
-            if (!diagDoc.exists()) {
-                throw new Error('Diagnóstico no encontrado');
-            }
-
-            const diagnostico = diagDoc.data();
-            const tipo = diagnostico.tipo;
-
-            // Calcular resultado según el tipo
-            const resultado = this.calcularResultado(tipo, respuestasFinales);
-
-            await this.db.collection('diagnosticos').doc(diagnosticoId).update({
-                estado: ESTADOS_PROCESO.DIAGNOSTICO_COMPLETADO,
-                respuestas: respuestasFinales,
-                resultado: resultado,
-                puntuacion: resultado.puntuacion,
-                completadoEn: new Date(),
-                updatedAt: new Date(),
-                porcentajeAvance: 100
-            });
-
-            alertService.success('Diagnóstico completado exitosamente');
-            return { success: true, resultado };
-
-        } catch (error) {
-            alertService.error(`Error al completar diagnóstico: ${error.message}`);
-            return { success: false, error: error.message };
-        }
-    }
-
-    /**
-     * Calcular resultado del diagnóstico según su tipo
-     */
-    calcularResultado(tipo, respuestas) {
-        const valores = Object.values(respuestas).filter(v => v !== null && v !== undefined);
-        
-        if (valores.length === 0) {
-            return {
-                puntuacion: 0,
-                estado: 'Sin respuestas',
-                recomendaciones: []
-            };
-        }
-
-        let puntuacion = 0;
-        
-        // Sumar todos los valores
-        valores.forEach(valor => {
-            puntuacion += parseInt(valor) || 0;
-        });
-
-        // Calcular promedio
-        const promedio = valores.length > 0 ? puntuacion / valores.length : 0;
-
-        // Determinar estado y recomendaciones según tipo y puntuación
-        let resultado;
-
-        switch (tipo) {
-            case TIPOS_DIAGNOSTICO.SIETE: // 7S
-                resultado = this.evaluarDiagnostico7S(promedio);
-                break;
-            case TIPOS_DIAGNOSTICO.VEINTIUNO: // 21S
-                resultado = this.evaluarDiagnostico21S(promedio);
-                break;
-            case TIPOS_DIAGNOSTICO.SESENTA: // 60S
-                resultado = this.evaluarDiagnostico60S(promedio);
-                break;
-            default:
-                resultado = {
-                    puntuacion: Math.round(promedio),
-                    estado: 'Por evaluar',
-                    recomendaciones: []
-                };
-        }
-
-        return {
-            ...resultado,
-            totalRespuestas: valores.length,
-            promedioRespuestas: Math.round(promedio * 100) / 100
-        };
-    }
-
-    /**
-     * Evaluar diagnóstico 7S (Simplificado)
-     */
-    evaluarDiagnostico7S(puntuacion) {
-        let estado, recomendaciones;
-
-        if (puntuacion >= 3.5) {
-            estado = 'CUMPLIMIENTO TOTAL';
-            recomendaciones = [
-                'Mantener el nivel de cumplimiento actual',
-                'Realizar auditorías periódicas',
-                'Continuar con la sensibilización al personal'
-            ];
-        } else if (puntuacion >= 2.5) {
-            estado = 'CUMPLIMIENTO SIGNIFICATIVO';
-            recomendaciones = [
-                'Fortalecer programas de capacitación',
-                'Implementar controles adicionales',
-                'Documentar procedimientos faltantes'
-            ];
-        } else if (puntuacion >= 1.5) {
-            estado = 'CUMPLIMIENTO PARCIAL';
-            recomendaciones = [
-                'Crear plan de mejora inmediato',
-                'Aumentar inspecciones y evaluaciones',
-                'Asignar recursos para mejora continua'
-            ];
-        } else {
-            estado = 'CUMPLIMIENTO INSUFICIENTE';
-            recomendaciones = [
-                'Intervención inmediata requerida',
-                'Revisar política de SG-SST',
-                'Establecer plan correctivo con seguimiento semanal'
-            ];
-        }
-
-        return {
-            puntuacion: Math.round(puntuacion * 100) / 100,
-            estado,
-            recomendaciones
-        };
-    }
-
-    /**
-     * Evaluar diagnóstico 21S
-     */
-    evaluarDiagnostico21S(puntuacion) {
-        let estado, recomendaciones;
-
-        if (puntuacion >= 4.2) {
-            estado = 'EXCELENCIA';
-            recomendaciones = [
-                'Consolidar buenas prácticas',
-                'Considerarse como empresa modelo',
-                'Compartir experiencias con otras empresas'
-            ];
-        } else if (puntuacion >= 3.4) {
-            estado = 'CONFORME';
-            recomendaciones = [
-                'Optimizar procesos existentes',
-                'Identificar oportunidades de mejora',
-                'Profundizar en temas críticos'
-            ];
-        } else if (puntuacion >= 2.4) {
-            estado = 'EN MEJORA';
-            recomendaciones = [
-                'Implementar acciones correctivas',
-                'Aumentar frecuencia de capacitaciones',
-                'Verificar cumplimiento de requisitos'
-            ];
-        } else {
-            estado = 'CRÍTICO';
-            recomendaciones = [
-                'Acción correctiva inmediata',
-                'Auditoría interna exhaustiva',
-                'Seguimiento mensual de mejoras'
-            ];
-        }
-
-        return {
-            puntuacion: Math.round(puntuacion * 100) / 100,
-            estado,
-            recomendaciones
-        };
-    }
-
-    /**
-     * Evaluar diagnóstico 60S
-     */
-    evaluarDiagnostico60S(puntuacion) {
-        let estado, recomendaciones;
-
-        if (puntuacion >= 4.5) {
-            estado = 'SISTEMA CERTIFICABLE';
-            recomendaciones = [
-                'Sistema listo para certificación',
-                'Mantener auditorías internas',
-                'Actualizar documentación anualmente'
-            ];
-        } else if (puntuacion >= 3.5) {
-            estado = 'SISTEMA MADURO';
-            recomendaciones = [
-                'Completar brechas documentales',
-                'Profundizar evaluaciones de riesgos',
-                'Mejorar indicadores de gestión'
-            ];
-        } else if (puntuacion >= 2.5) {
-            estado = 'SISTEMA EN DESARROLLO';
-            recomendaciones = [
-                'Implementar procedimientos faltantes',
-                'Fortalecer evaluaciones de riesgos',
-                'Crear plan de contingencia'
-            ];
-        } else {
-            estado = 'SISTEMA INCIPIENTE';
-            recomendaciones = [
-                'Desarrollar política de SG-SST',
-                'Crear estructura de comités',
-                'Iniciar programa de capacitación'
-            ];
-        }
-
-        return {
-            puntuacion: Math.round(puntuacion * 100) / 100,
-            estado,
-            recomendaciones
-        };
-    }
-
-    /**
-     * Obtener diagnósticos activos del usuario
-     */
-    async obtenerDiagnosticosActivos() {
-        try {
-            const userId = this.auth.currentUser.uid;
-            const snapshot = await this.db.collection('diagnosticos')
-                .where('createdBy', '==', userId)
-                .where('estado', 'in', [
-                    ESTADOS_PROCESO.SIN_AGENDAR,
-                    ESTADOS_PROCESO.DIAGNOSTICO_AGENDADO,
-                    ESTADOS_PROCESO.DIAGNOSTICO_EN_PROCESO
-                ])
-                .orderBy('createdAt', 'desc')
-                .get();
-
-            const diagnosticos = [];
-            snapshot.forEach(doc => {
-                diagnosticos.push({ id: doc.id, ...doc.data() });
-            });
-
-            return { success: true, diagnosticos };
-
-        } catch (error) {
-            console.error('Error al obtener diagnósticos activos:', error);
-            return { success: false, error: error.message, diagnosticos: [] };
-        }
-    }
-
-    /**
-     * Eliminar diagnóstico
-     */
-    async eliminarDiagnostico(diagnosticoId) {
-        try {
-            await this.db.collection('diagnosticos').doc(diagnosticoId).delete();
-            alertService.success('Diagnóstico eliminado correctamente');
-            return { success: true };
-
-        } catch (error) {
-            alertService.error(`Error al eliminar diagnóstico: ${error.message}`);
-            return { success: false, error: error.message };
-        }
+/**
+ * Elimina un diagnóstico (solo para supervisores)
+ * @param {string} diagnosticoId 
+ * @returns {Promise}
+ */
+export async function eliminarDiagnostico(diagnosticoId) {
+    try {
+        await deleteDoc(doc(db, 'diagnosticos', diagnosticoId));
+        return { success: true };
+    } catch (error) {
+        console.error('Error eliminando diagnóstico:', error);
+        return { success: false, error: error.message };
     }
 }
 
-export default DiagnosticoService;
+/**
+ * Obtiene diagnósticos para la agenda global con filtros
+ * @param {Array} diagnosticos - Todos los diagnósticos
+ * @param {Object} filtros - { gestorId, periodo, estado }
+ * @returns {Array} - Diagnósticos filtrados
+ */
+export function filtrarDiagnosticosGlobal(diagnosticos, filtros) {
+    let filtrados = [...diagnosticos];
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+    
+    // Filtrar por gestor
+    if (filtros.gestorId) {
+        filtrados = filtrados.filter(d => 
+            d.creadoPor && d.creadoPor.uid === filtros.gestorId
+        );
+    }
+    
+    // Filtrar por período
+    if (filtros.periodo === 'hoy') {
+        filtrados = filtrados.filter(d => {
+            if (!d.fechaAgendada) return false;
+            const fechaCita = new Date(d.fechaAgendada + 'T00:00:00');
+            fechaCita.setHours(0, 0, 0, 0);
+            return fechaCita.getTime() === hoy.getTime();
+        });
+    } else if (filtros.periodo === 'semana') {
+        const finSemana = new Date(hoy);
+        finSemana.setDate(finSemana.getDate() + 7);
+        filtrados = filtrados.filter(d => {
+            if (!d.fechaAgendada) return false;
+            const fechaCita = new Date(d.fechaAgendada + 'T00:00:00');
+            return fechaCita >= hoy && fechaCita <= finSemana;
+        });
+    } else if (filtros.periodo === 'mes') {
+        const primerDiaMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+        const ultimoDiaMes = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0);
+        filtrados = filtrados.filter(d => {
+            if (!d.fechaAgendada) return false;
+            const fechaCita = new Date(d.fechaAgendada + 'T00:00:00');
+            return fechaCita >= primerDiaMes && fechaCita <= ultimoDiaMes;
+        });
+    }
+    
+    // Filtrar por estado
+    if (filtros.estado) {
+        filtrados = filtrados.filter(d => d.estado === filtros.estado);
+    }
+    
+    return filtrados;
+}

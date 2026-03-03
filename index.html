@@ -3,613 +3,662 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SG-SST - Sistema de Gestión en Seguridad y Salud en el Trabajo</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .container {
-            background: white;
-            border-radius: 12px;
-            padding: 40px;
-            max-width: 450px;
-            width: 100%;
-            box-shadow: 0 25px 70px rgba(0,0,0,0.3);
-        }
-
-        .logo-section {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .logo {
-            font-size: 64px;
-            margin-bottom: 15px;
-        }
-
-        h1 {
-            font-size: 32px;
-            margin: 0 0 10px 0;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        h2 {
-            font-size: 20px;
-            color: #2c3e50;
-            margin: 0 0 20px 0;
-        }
-
-        .subtitle {
-            color: #95a5a6;
-            font-size: 14px;
-            margin: 0;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
-            color: #2c3e50;
-            font-size: 14px;
-        }
-
-        input {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e1e8ed;
-            border-radius: 8px;
-            font-size: 14px;
-            transition: all 0.3s;
-            box-sizing: border-box;
-        }
-
-        input:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        button {
-            width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.3s;
-            margin-bottom: 12px;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-        }
-
-        .btn-primary:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
-        }
-
-        .btn-secondary {
-            background: white;
-            color: #667eea;
-            border: 2px solid #667eea;
-        }
-
-        .btn-secondary:hover:not(:disabled) {
-            background: #f8f9fa;
-        }
-
-        button:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .button-group {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        .button-group button {
-            flex: 1;
-            margin-bottom: 0;
-            padding: 8px;
-            font-size: 12px;
-        }
-
-        .alert {
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            border-left: 5px solid;
-            display: none;
-            font-size: 14px;
-        }
-
-        .alert.show {
-            display: block;
-            animation: slideDown 0.3s ease;
-        }
-
-        .alert-success {
-            background: #d1fae5;
-            color: #065f46;
-            border-color: #10b981;
-        }
-
-        .alert-error {
-            background: #fee2e2;
-            color: #991b1b;
-            border-color: #ef4444;
-        }
-
-        .alert-warning {
-            background: #fef3cd;
-            color: #856404;
-            border-color: #ffc107;
-        }
-
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .hidden {
-            display: none !important;
-        }
-
-        .loader {
-            display: none;
-            text-align: center;
-            padding: 20px;
-        }
-
-        .loader.show {
-            display: block;
-        }
-
-        .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #667eea;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .welcome {
-            text-align: center;
-            color: white;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-        }
-
-        .welcome h1 {
-            font-size: 48px;
-            margin-bottom: 20px;
-            -webkit-text-fill-color: white;
-            color: white;
-            background: none;
-        }
-
-        .welcome p {
-            font-size: 16px;
-            margin: 10px 0;
-            color: rgba(255, 255, 255, 0.9);
-        }
-
-        .welcome button {
-            background: white;
-            color: #667eea;
-            margin-top: 30px;
-        }
-
-        .error-box {
-            background: #fee2e2;
-            color: #991b1b;
-            text-align: center;
-        }
-
-        .error-box h1 {
-            background: none;
-            color: #991b1b;
-            -webkit-text-fill-color: #991b1b;
-            font-size: 36px;
-        }
-    </style>
+    <title>Sistema SG-SST - Gestión por Empresa</title>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/main.css">
+    
+    <!-- EmailJS SDK -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    
+    <!-- Librerías para PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
 </head>
 <body>
-    <div id="root"></div>
+    <!-- Pantalla de Login -->
+    <div id="loginScreen" class="login-screen">
+        <div class="login-box">
+            <div class="login-logo">
+                <img src="assets/logo-cji.png" alt="Logo Empresa" style="width: 200px; height: 200px; object-fit: contain;">
+            </div>
+            <h1>Sistema SG-SST</h1>
+            <p>Gestión de Diagnósticos por Empresa</p>
+            
+            <button id="googleLoginBtn" class="google-btn">
+                <svg class="google-icon" viewBox="0 0 24 24">
+                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                </svg>
+                <span>Iniciar sesión con Google</span>
+            </button>
 
-    <script>
-        // ============================================
-        // ESTADO GLOBAL
-        // ============================================
-        let auth = null;
-        let db = null;
-        let currentUser = null;
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyC57wX-bhIEoZuO7g-Kn52NwStMHwf-dWA",
-            authDomain: "sgsst-reservas.firebaseapp.com",
-            projectId: "sgsst-reservas",
-            storageBucket: "sgsst-reservas.firebasestorage.app",
-            messagingSenderId: "8497409289",
-            appId: "1:8497409289:web:7f43df201769666d58f7d8"
-        };
-
-        console.log('🚀 Iniciando aplicación SG-SST...');
-
-        // ============================================
-        // FUNCIONES DE RENDER
-        // ============================================
-
-        function renderLoading() {
-            const root = document.getElementById('root');
-            root.innerHTML = `
-                <div class="container" style="text-align: center;">
-                    <div class="logo">🛡️</div>
-                    <h1>SG-SST</h1>
-                    <p style="color: #95a5a6; margin: 20px 0;">Cargando...</p>
-                    <div class="spinner" style="margin: 20px auto;"></div>
+            <div class="divider">
+                <span style="background: white; padding: 0 10px;">O</span>
+                <div style="position: absolute; width: 100%; height: 1px; background: var(--border-color); top: 50%; left: 0; z-index: 0;"></div>
+            </div>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="loginEmail" placeholder="tu@email.com" required>
                 </div>
-            `;
-        }
+                <div class="form-group">
+                    <label>Contraseña</label>
+                    <input type="password" id="loginPassword" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    Iniciar Sesión
+                </button>
+            </form>
 
-        function renderError(mensaje) {
-            const root = document.getElementById('root');
-            root.innerHTML = `
-                <div class="container error-box">
-                    <h1>❌</h1>
-                    <h2>Error</h2>
-                    <p>${mensaje}</p>
-                    <button class="btn-primary" onclick="location.reload()" style="background: #667eea; color: white; margin-top: 20px;">
-                        Reintentar
+            <p style="font-size: 12px; color: var(--text-muted); margin-top: 20px;">
+                ¿No tienes cuenta? <a href="#" id="showRegisterLink" style="color: var(--primary-color); text-decoration: none; font-weight: 600;">Regístrate aquí</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- Pantalla de Registro -->
+    <div id="registerScreen" class="login-screen" style="display: none;">
+        <div class="login-box">
+            <div class="login-logo">🏢</div>
+            <h1>Crear Cuenta</h1>
+            <p>Sistema SG-SST</p>
+            
+            <form id="registerForm">
+                <div class="form-group">
+                    <label>Nombre Completo</label>
+                    <input type="text" id="registerNombre" placeholder="Juan Pérez" required>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="registerEmail" placeholder="tu@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label>Contraseña</label>
+                    <input type="password" id="registerPassword" placeholder="Mínimo 6 caracteres" required minlength="6">
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    Crear Cuenta
+                </button>
+            </form>
+
+            <p style="font-size: 12px; color: var(--text-muted); margin-top: 20px;">
+                ¿Ya tienes cuenta? <a href="#" id="showLoginLink" style="color: var(--primary-color); text-decoration: none; font-weight: 600;">Inicia sesión</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- Aplicación Principal -->
+    <div id="mainApp" class="main-app">
+        <div class="header">
+            <div class="header-left">
+                <div class="header-logo">
+                    <img src="assets/logo.png" alt="Logo Empresa" style="width: 48px; height: 48px; object-fit: contain;">
+                </div>
+                <div class="header-title">
+                    <h1>Sistema SG-SST</h1>
+                    <p>Gestión de Diagnósticos por Empresa</p>
+                </div>
+            </div>  
+            <div class="user-info">
+                <div style="text-align: right;">
+                    <img id="userPhoto" class="user-avatar" style="display: none;">
+                    <div id="userPhotoPlaceholder" class="user-avatar-placeholder" style="display: none;"></div>
+                </div>
+                <div style="text-align: right;">
+                    <div id="userName" style="font-weight: bold; font-size: 16px;"></div>
+                    <div id="userEmail" style="font-size: 13px; color: var(--text-secondary);"></div>
+                </div>
+                <button onclick="window.handleLogout()" class="btn btn-danger btn-sm">
+                    Salir
+                </button>
+            </div>
+        </div>
+
+        <!-- Contenedor de Alertas -->
+        <div id="alertContainer" style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 10000; width: 90%; max-width: 600px; pointer-events: none;"></div>
+
+        <!-- Menú Principal -->
+        <div id="menuView" class="menu-grid">
+            <div class="menu-card" onclick="window.showPanel('empresas')">
+                <div class="menu-icon">🏢</div>
+                <div class="menu-title">Gestión de Empresas</div>
+                <div class="menu-description">Crear, buscar y administrar empresas. Ver historial completo de diagnósticos por empresa.</div>
+            </div>
+
+            <div class="menu-card" onclick="window.showPanel('agenda')">
+                <div class="menu-icon">📅</div>
+                <div class="menu-title">Agenda</div>
+                <div class="menu-description">Visualizar citas de hoy y realizar diagnósticos programados.</div>
+            </div>
+
+            <div class="menu-card" onclick="window.showPanel('informes')">
+                <div class="menu-icon">📊</div>
+                <div class="menu-title">Informes por Empresa</div>
+                <div class="menu-description">Ver todos los diagnósticos completados organizados por empresa.</div>
+            </div>
+
+            <div class="menu-card" onclick="window.showPanel('exportar')">
+                <div class="menu-icon">📤</div>
+                <div class="menu-title">Exportar y Enviar Reporte</div>
+                <div class="menu-description">Generar reportes en PDF, Excel y enviar por correo electrónico a los clientes.</div>
+            </div>
+            
+            <div class="menu-card" onclick="window.showPanel('supervision')" id="menuSupervision" style="display: none;">
+                <div class="menu-icon">👥</div>
+                <div class="menu-title">Panel de Supervisión</div>
+                <div class="menu-description">Ver estadísticas de todos los gestores y reportes de reagendamiento.</div>
+            </div>
+        </div>
+
+        <!-- Panel de Empresas -->
+        <div id="panel-empresas" class="panel-view">
+            <div class="panel-header">
+                <h2 class="panel-title">Gestión de Empresas</h2>
+                <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                    <button onclick="window.openEmpresaModal()" class="btn btn-success">
+                        Nueva Empresa
+                    </button>
+                    <button onclick="window.backToMenu()" class="btn btn-secondary">
+                        Volver al Menú
                     </button>
                 </div>
-            `;
-        }
+            </div>
+            <div class="panel-content">
+                <div id="estadisticasUsuario" style="margin-bottom: 30px;"></div>
+                <div style="display: flex; gap: 12px; margin-bottom: 30px;">
+                    <input 
+                        type="text" 
+                        id="searchEmpresas" 
+                        placeholder="🔍 Buscar por nombre o NIT exacto..."
+                        onkeypress="if(event.key === 'Enter') window.buscarEmpresaExacta()"
+                    >
+                    <button 
+                        onclick="window.buscarEmpresaExacta()" 
+                        class="btn btn-primary"
+                        style="min-width: 120px;"
+                    >
+                        Buscar
+                    </button>
+                </div>
+                <div id="empresasList"></div>
+            </div>
+        </div>
 
-        function renderLogin() {
-            const root = document.getElementById('root');
-            root.innerHTML = `
-                <div class="container">
-                    <div class="logo-section">
-                        <div class="logo">🛡️</div>
-                        <h1>SG-SST</h1>
-                        <p class="subtitle">Sistema de Gestión en Seguridad y Salud en el Trabajo</p>
-                    </div>
-
-                    <div id="alert" class="alert"></div>
-
-                    <div id="loginForm">
-                        <div class="form-group">
-                            <label for="emailLogin">📧 Email</label>
-                            <input type="email" id="emailLogin" placeholder="tu@email.com" autocomplete="email">
+        <!-- Panel de Supervisión -->
+        <div id="panel-supervision" class="panel-view">
+            <div class="panel-header">
+                <h2 class="panel-title">👥 Panel de Supervisión</h2>
+                <button onclick="window.backToMenu()" class="btn btn-secondary">
+                    Volver al Menú
+                </button>
+            </div>
+            <div class="panel-content">
+                <div style="background: white; padding: 20px; border-radius: 15px; margin-bottom: 30px; box-shadow: var(--shadow-sm);">
+                    <h3 style="font-size: 18px; margin-bottom: 20px; color: var(--text-primary);">🔍 Filtros</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                        <div>
+                            <label style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--text-primary); font-size: 14px;">
+                                Gestor
+                            </label>
+                            <select id="filtroGestor" style="width: 100%; padding: 12px; border: 2px solid var(--border-color); border-radius: var(--radius-md); font-size: 14px;">
+                                <option value="">Todos los gestores</option>
+                            </select>
                         </div>
-
-                        <div class="form-group">
-                            <label for="passwordLogin">🔒 Contraseña</label>
-                            <input type="password" id="passwordLogin" placeholder="••••••••" autocomplete="current-password">
+                        <div>
+                            <label style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--text-primary); font-size: 14px;">
+                                Período
+                            </label>
+                            <select id="filtroPeriodo" style="width: 100%; padding: 12px; border: 2px solid var(--border-color); border-radius: var(--radius-md); font-size: 14px;">
+                                <option value="todo">Todo el historial</option>
+                                <option value="hoy">Hoy</option>
+                                <option value="mes">Este mes</option>
+                            </select>
                         </div>
-
-                        <button class="btn-primary" onclick="handleLoginEmail()">Iniciar Sesión</button>
-                        <button class="btn-secondary" onclick="handleLoginGoogle()">🔗 Iniciar con Google</button>
-
-                        <div class="button-group">
-                            <button class="btn-secondary" onclick="handleForgotPassword()">¿Olvidaste?</button>
-                            <button class="btn-primary" onclick="showRegister()">Crear Cuenta</button>
-                        </div>
-                    </div>
-
-                    <div id="registerForm" class="hidden">
-                        <h2>Crear Cuenta</h2>
-
-                        <div class="form-group">
-                            <label for="nombreRegistro">👤 Nombre</label>
-                            <input type="text" id="nombreRegistro" placeholder="Tu Nombre">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="emailRegistro">📧 Email</label>
-                            <input type="email" id="emailRegistro" placeholder="tu@email.com">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="passwordRegistro">🔒 Contraseña</label>
-                            <input type="password" id="passwordRegistro" placeholder="Mínimo 6 caracteres">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="passwordConfirm">🔒 Confirmar</label>
-                            <input type="password" id="passwordConfirm" placeholder="Repite tu contraseña">
-                        </div>
-
-                        <button class="btn-primary" onclick="handleRegister()">Registrarse</button>
-                        <button class="btn-secondary" onclick="showLogin()">Volver al Login</button>
-                    </div>
-
-                    <div id="loader" class="loader">
-                        <div class="spinner"></div>
-                        <p style="color: #95a5a6; margin-top: 15px;">Procesando...</p>
                     </div>
                 </div>
-            `;
+                <div id="supervisionContent"></div>
+            </div>
+        </div>
 
-            // Setup password enter
-            const passwordLogin = document.getElementById('passwordLogin');
-            if (passwordLogin) {
-                passwordLogin.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') handleLoginEmail();
-                });
-            }
-        }
-
-        function renderWelcome(user) {
-            const root = document.getElementById('root');
-            root.innerHTML = `
-                <div class="container welcome">
-                    <h1>🎉</h1>
-                    <h1>¡Bienvenido!</h1>
-                    <p style="font-size: 18px; margin: 20px 0;"><strong>${user.email}</strong></p>
-                    <p>Nombre: <strong>${user.displayName || 'Usuario'}</strong></p>
-                    <p style="margin-top: 30px; font-size: 14px;">La aplicación está en desarrollo...</p>
-                    <button class="btn-primary" onclick="handleLogout()">Cerrar Sesión</button>
+        <!-- Panel de Agenda -->
+        <div id="panel-agenda" class="panel-view">
+            <div class="panel-header">
+                <h2 class="panel-title">Agenda de Citas</h2>
+                <button onclick="window.backToMenu()" class="btn btn-secondary">
+                    Volver al Menú
+                </button>
+            </div>
+            <div class="panel-content">
+                <div id="agendaTabs" style="display: none; margin-bottom: 25px;">
+                    <div style="display: flex; gap: 10px; border-bottom: 2px solid var(--border-color);">
+                        <button 
+                            id="tabMiAgenda" 
+                            onclick="window.cambiarTabAgenda('propia')" 
+                            style="flex: 1; padding: 15px; border: none; background: var(--primary-gradient); color: white; border-radius: 10px 10px 0 0; font-weight: 600; cursor: pointer;"
+                        >
+                            📅 Mi Agenda
+                        </button>
+                        <button 
+                            id="tabAgendaGlobal" 
+                            onclick="window.cambiarTabAgenda('global')" 
+                            style="flex: 1; padding: 15px; border: none; background: #f8f9fa; color: var(--text-secondary); border-radius: 10px 10px 0 0; font-weight: 600; cursor: pointer;"
+                        >
+                            👥 Agenda de Todos
+                        </button>
+                    </div>
                 </div>
-            `;
-        }
 
-        // ============================================
-        // FUNCIONES DE UI
-        // ============================================
+                <div id="tabContentMiAgenda">
+                    <div style="background: #f0f9ff; padding: 20px; border-radius: var(--radius-lg); margin-bottom: 25px; border-left: 4px solid var(--primary-color);">
+                        <h3 style="font-size: 20px; margin-bottom: 10px; color: var(--text-primary);">📅 Mis Citas de Hoy</h3>
+                        <p style="color: var(--text-secondary);" id="fechaHoy"></p>
+                    </div>
+                    <div id="citasHoyList"></div>
+                </div>
 
-        function showAlert(mensaje, tipo = 'info') {
-            const alertEl = document.getElementById('alert');
-            if (!alertEl) return;
+                <div id="tabContentAgendaGlobal" style="display: none;">
+                    <div style="background: var(--primary-gradient); color: white; padding: 20px; border-radius: var(--radius-lg); margin-bottom: 25px;">
+                        <h3 style="font-size: 20px; margin-bottom: 10px;">👥 Agenda Global - Vista de Supervisor</h3>
+                        <p style="opacity: 0.9;">Visualiza y gestiona las citas de todos los gestores</p>
+                    </div>
 
-            const icons = {
-                success: '✓',
-                error: '✕',
-                warning: '⚠',
-                info: 'ℹ'
-            };
+                    <div style="background: white; padding: 20px; border-radius: 15px; margin-bottom: 25px; box-shadow: var(--shadow-sm);">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 15px;">
+                            <div>
+                                <label style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--text-primary);">
+                                    👤 Gestor
+                                </label>
+                                <select id="filtroGestorAgenda" style="width: 100%; padding: 12px; border: 2px solid var(--border-color); border-radius: var(--radius-md);">
+                                    <option value="">Todos los gestores</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--text-primary);">
+                                    📅 Período
+                                </label>
+                                <select id="filtroPeriodoAgenda" style="width: 100%; padding: 12px; border: 2px solid var(--border-color); border-radius: var(--radius-md);">
+                                    <option value="hoy">Hoy</option>
+                                    <option value="semana">Esta semana</option>
+                                    <option value="mes">Este mes</option>
+                                    <option value="todo" selected>Todas</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--text-primary);">
+                                    🔍 Estado
+                                </label>
+                                <select id="filtroEstadoAgenda" style="width: 100%; padding: 12px; border: 2px solid var(--border-color); border-radius: var(--radius-md);">
+                                    <option value="">Todos los estados</option>
+                                    <option value="agendado">Agendado</option>
+                                    <option value="en-proceso">En Proceso</option>
+                                    <option value="completado">Completado</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                            <button onclick="window.aplicarFiltrosAgenda()" class="btn btn-primary" style="display: flex; align-items: center; gap: 8px;">
+                                <span>🔍</span>
+                                <span>Buscar</span>
+                            </button>
+                            <button onclick="window.limpiarFiltrosAgenda()" class="btn btn-secondary" style="display: flex; align-items: center; gap: 8px;">
+                                <span>🗑️</span>
+                                <span>Borrar Filtros</span>
+                            </button>
+                        </div>
+                    </div>
 
-            alertEl.className = `alert show alert-${tipo}`;
-            alertEl.innerHTML = `<strong>${icons[tipo]}</strong> ${mensaje}`;
+                    <div id="agendaGlobalList"></div>
+                </div>
+            </div>
+        </div>
 
-            setTimeout(() => {
-                alertEl?.classList.remove('show');
-            }, 4000);
-        }
+        <!-- Panel de Informes -->
+        <div id="panel-informes" class="panel-view">
+            <div class="panel-header">
+                <h2 class="panel-title">📊 Informes por Empresa</h2>
+                <button onclick="window.backToMenu()" class="btn btn-secondary">
+                    Volver al Menú
+                </button>
+            </div>
+            <div class="panel-content">
+                <div class="search-container">
+                    <span class="search-icon">🔍</span>
+                    <input 
+                        type="text" 
+                        class="search-input" 
+                        id="searchInformes" 
+                        placeholder="Buscar empresa con diagnósticos..."
+                        oninput="window.filtrarInformes()"
+                    >
+                </div>
+                <div id="informesList"></div>
+            </div>
+        </div>
 
-        function showLoader(show) {
-            const loader = document.getElementById('loader');
-            if (loader) {
-                loader.classList.toggle('show', show);
-            }
-            const buttons = document.querySelectorAll('button');
-            buttons.forEach(btn => btn.disabled = show);
-        }
+        <!-- Panel de Formulario -->
+        <div id="panel-formulario" class="panel-view">
+            <div class="panel-header">
+                <h2 class="panel-title" id="formularioTitulo">Formulario de Diagnóstico</h2>
+                <button onclick="window.cerrarFormularioDiagnostico()" class="btn btn-secondary">
+                    Volver a Agenda
+                </button>
+            </div>
+            <div class="panel-content">
+                <div id="formularioContent"></div>
+            </div>
+        </div>
 
-        function showLogin() {
-            document.getElementById('loginForm')?.classList.remove('hidden');
-            document.getElementById('registerForm')?.classList.add('hidden');
-        }
+        <!-- Panel de Exportar -->
+        <div id="panel-exportar" class="panel-view">
+            <div class="panel-header">
+                <h2 class="panel-title">Exportar y Enviar Reporte</h2>
+                <button onclick="window.backToMenu()" class="btn btn-secondary">
+                    Volver al Menú
+                </button>
+            </div>
+            <div class="panel-content" id="exportarPanelContent">
+                <div style="text-align: center; padding: 60px;">
+                    <div style="font-size: 48px; margin-bottom: 20px;">⏳</div>
+                    <h3>Cargando panel de exportación...</h3>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        function showRegister() {
-            document.getElementById('loginForm')?.classList.add('hidden');
-            document.getElementById('registerForm')?.classList.remove('hidden');
-        }
+    <!-- Modales -->
+    <!-- Modal Empresa -->
+    <div id="empresaModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="empresaModalTitle">Nueva Empresa</h3>
+            </div>
+            <form id="empresaForm">
+                <div class="modal-body">
+                    <div class="form-grid full">
+                        <div class="form-group">
+                            <label>Razón Social *</label>
+                            <input type="text" id="empresaNombre" required>
+                        </div>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>NIT *</label>
+                            <input type="text" id="empresaNit" required>
+                        </div>
+                        <div class="form-group">
+                            <label>N° Trabajadores *</label>
+                            <input type="number" id="empresaTrabajadores" min="1" required>
+                        </div>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Responsable</label>
+                            <input type="text" id="empresaResponsable">
+                        </div>
+                        <div class="form-group">
+                            <label>Teléfono</label>
+                            <input type="tel" id="empresaTelefono">
+                        </div>
+                    </div>
+                    <div class="form-grid full">
+                        <div class="form-group">
+                            <label>📧 Emails de Contacto (separados por comas)</label>
+                            <textarea 
+                                id="empresaEmails" 
+                                rows="3" 
+                                placeholder="ejemplo1@empresa.com, ejemplo2@empresa.com, ejemplo3@empresa.com"
+                                style="resize: vertical;"
+                            ></textarea>
+                            <small style="color: var(--text-secondary); font-size: 12px; display: block; margin-top: 5px;">
+                                💡 Puedes agregar varios correos separados por comas. Todos recibirán las notificaciones.
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" onclick="window.closeEmpresaModal()" class="btn btn-secondary">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-success">
+                        Guardar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 
-        function getErrorMessage(code) {
-            const messages = {
-                'auth/invalid-email': 'Email inválido',
-                'auth/user-disabled': 'Cuenta deshabilitada',
-                'auth/user-not-found': 'Usuario no encontrado',
-                'auth/wrong-password': 'Contraseña incorrecta',
-                'auth/email-already-in-use': 'Email ya registrado',
-                'auth/weak-password': 'Contraseña muy débil',
-                'auth/network-request-failed': 'Error de conexión',
-                'auth/too-many-requests': 'Demasiados intentos',
-                'auth/popup-blocked': 'Popup bloqueado'
-            };
-            return messages[code] || 'Error: ' + code;
-        }
+    <!-- Modal Agendar -->
+    <div id="agendarModal" class="modal">
+        <div class="modal-content" style="max-width: 800px;">
+            <div class="modal-header">
+                <h3 id="agendarModalTitulo">Agendar Servicio</h3>
+                <p id="agendarEmpresaNombre" style="color: var(--text-secondary); margin-top: 10px;"></p>
+            </div>
+            <form id="agendarForm">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Número de Orden de Servicio *</label>
+                        <input type="text" id="ordenServicio" required placeholder="Ej: OS-2025-001">
+                    </div>
 
-        // ============================================
-        // HANDLERS
-        // ============================================
+                    <div class="calendario-modal-container" style="background: #f8f9fa; border-radius: 12px; padding: 25px; margin-bottom: 25px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                            <button type="button" class="nav-btn" onclick="window.cambiarMesModal(-1)">◀</button>
+                            <div class="mes-actual" id="mesActualModal" style="font-size: 20px; font-weight: 700; color: var(--text-primary);"></div>
+                            <button type="button" class="nav-btn" onclick="window.cambiarMesModal(1)">▶</button>
+                        </div>
 
-        async function handleLoginEmail() {
-            const email = document.getElementById('emailLogin')?.value?.trim();
-            const password = document.getElementById('passwordLogin')?.value;
+                        <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-bottom: 12px;">
+                            <div class="dia-nombre">D</div>
+                            <div class="dia-nombre">L</div>
+                            <div class="dia-nombre">M</div>
+                            <div class="dia-nombre">M</div>
+                            <div class="dia-nombre">J</div>
+                            <div class="dia-nombre">V</div>
+                            <div class="dia-nombre">S</div>
+                        </div>
 
-            if (!email || !password) {
-                showAlert('Completa email y contraseña', 'warning');
-                return;
-            }
+                        <div id="calendarioDiasModal" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px;"></div>
 
-            showLoader(true);
-            try {
-                await auth.signInWithEmailAndPassword(email, password);
-                showAlert('¡Login exitoso!', 'success');
-            } catch (error) {
-                showAlert(getErrorMessage(error.code), 'error');
-                console.error('Login error:', error);
-            } finally {
-                showLoader(false);
-            }
-        }
+                        <div id="horariosDisponibles" style="display: none;">
+                            <h3 style="color: #0f7c42; font-size: 18px; margin-bottom: 20px; margin-top: 25px;">Horarios disponibles:</h3>
+                            <div id="horariosGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px;"></div>
+                            <div id="contadorHorarios" style="background: #0f7c42; color: white; padding: 15px; border-radius: 10px; text-align: center; font-weight: 700; margin-top: 20px;"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Tipo de Servicio *</label>
+                        <select id="tipoServicio" required onchange="window.mostrarCamposDinamicos()">
+                            <option value="">Seleccione un tipo de servicio</option>
+                            <option value="diagnostico">1. Diagnóstico</option>
+                            <option value="auditoria-externa">2. Auditoría Externa</option>
+                            <option value="capacitacion">3. Capacitación Continuada</option>
+                            <option value="desarrollo-juridico">4. Desarrollo Jurídico Legal</option>
+                            <option value="remision">5. Remisión a Otras Áreas</option>
+                        </select>
+                    </div>
 
-        async function handleLoginGoogle() {
-            const provider = new firebase.auth.GoogleAuthProvider();
-            showLoader(true);
-            try {
-                await auth.signInWithPopup(provider);
-                showAlert('¡Login con Google exitoso!', 'success');
-            } catch (error) {
-                showAlert(getErrorMessage(error.code), 'error');
-                console.error('Google login error:', error);
-            } finally {
-                showLoader(false);
-            }
-        }
+                    <div id="camposDiagnostico" style="display: none;">
+                        <div style="background: #f0f9ff; padding: 25px; border-radius: 12px; margin-bottom: 20px; border-left: 4px solid var(--primary-color);">
+                            <h4 style="margin-bottom: 20px; color: var(--text-primary); font-size: 18px;">📊 Datos del Diagnóstico</h4>
+                            
+                            <div class="form-group">
+                                <label>Nivel de Riesgo *</label>
+                                <select id="nivelRiesgo" onchange="window.actualizarTiposDisponibles()">
+                                    <option value="">Seleccione el nivel de riesgo</option>
+                                    <option value="nivel-1">Nivel I - Riesgo Mínimo</option>
+                                    <option value="nivel-2-3">Nivel II y III - Riesgo Medio</option>
+                                    <option value="nivel-4-5">Nivel IV y V - Riesgo Alto</option>
+                                </select>
+                            </div>
 
-        async function handleRegister() {
-            const nombre = document.getElementById('nombreRegistro')?.value?.trim();
-            const email = document.getElementById('emailRegistro')?.value?.trim();
-            const password = document.getElementById('passwordRegistro')?.value;
-            const confirmPassword = document.getElementById('passwordConfirm')?.value;
+                            <div class="form-group">
+                                <label>Tipo de Diagnóstico *</label>
+                                <select id="tipoDiagnostico" onchange="window.mostrarCamposPorTipo()">
+                                    <option value="">Seleccione un tipo</option>
+                                    <option value="7s">7 Estándares (7s)</option>
+                                    <option value="21s">21 Estándares (21s)</option>
+                                    <option value="60s">60 Estándares (60s)</option>
+                                </select>
+                            </div>
 
-            if (!nombre || !email || !password || !confirmPassword) {
-                showAlert('Completa todos los campos', 'warning');
-                return;
-            }
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                                <div class="form-group">
+                                    <label>Actividad Económica *</label>
+                                    <input type="text" id="actividadEconomica" placeholder="Ej: Construcción, Manufactura, etc.">
+                                </div>
+                                <div class="form-group">
+                                    <label>Cantidad de Trabajadores *</label>
+                                    <input type="number" id="cantidadTrabajadores" min="1" placeholder="Ej: 50">
+                                </div>
+                            </div>
 
-            if (password !== confirmPassword) {
-                showAlert('Las contraseñas no coinciden', 'warning');
-                return;
-            }
+                            <div id="campos7s" style="display: none;">
+                                <div style="background: #e3f2fd; padding: 15px; border-radius: 8px; margin-top: 15px;">
+                                    <h5 style="margin-bottom: 10px; color: #1976d2; font-size: 16px;">⭐ Campos para 7 Estándares</h5>
+                                    <div class="form-group">
+                                        <label>Información Adicional 7s</label>
+                                        <input type="text" id="campo7s1" placeholder="Información específica para diagnóstico de 7 estándares">
+                                    </div>
+                                </div>
+                            </div>
 
-            if (password.length < 6) {
-                showAlert('La contraseña debe tener mínimo 6 caracteres', 'warning');
-                return;
-            }
+                            <div id="campos21s" style="display: none;">
+                                <div style="background: #fff3e0; padding: 15px; border-radius: 8px; margin-top: 15px;">
+                                    <h5 style="margin-bottom: 10px; color: #f57c00; font-size: 16px;">⭐⭐ Campos para 21 Estándares</h5>
+                                    <div class="form-group">
+                                        <label>Información Adicional 21s</label>
+                                        <input type="text" id="campo21s1" placeholder="Información específica para diagnóstico de 21 estándares">
+                                    </div>
+                                </div>
+                            </div>
 
-            showLoader(true);
-            try {
-                const result = await auth.createUserWithEmailAndPassword(email, password);
-                await result.user.updateProfile({ displayName: nombre });
-                await db.collection('usuarios').doc(result.user.uid).set({
-                    nombre: nombre,
-                    email: email,
-                    fechaCreacion: new Date()
-                });
+                            <div id="campos60s" style="display: none;">
+                                <div style="background: #f3e5f5; padding: 15px; border-radius: 8px; margin-top: 15px;">
+                                    <h5 style="margin-bottom: 10px; color: #7b1fa2; font-size: 16px;">⭐⭐⭐ Campos para 60 Estándares</h5>
+                                    <div class="form-group">
+                                        <label>Información Adicional 60s</label>
+                                        <input type="text" id="campo60s1" placeholder="Información específica para diagnóstico de 60 estándares">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-                showAlert('¡Cuenta creada! Ahora inicia sesión.', 'success');
-                setTimeout(() => {
-                    document.getElementById('nombreRegistro').value = '';
-                    document.getElementById('emailRegistro').value = '';
-                    document.getElementById('passwordRegistro').value = '';
-                    document.getElementById('passwordConfirm').value = '';
-                    showLogin();
-                }, 1500);
-            } catch (error) {
-                showAlert(getErrorMessage(error.code), 'error');
-                console.error('Register error:', error);
-            } finally {
-                showLoader(false);
-            }
-        }
+                    <div id="camposAuditoriaExterna" style="display: none;">
+                        <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+                            <h4 style="margin-bottom: 15px; color: var(--text-primary);">📋 Datos de Auditoría Externa</h4>
+                            <p style="color: var(--text-secondary);">Campos en desarrollo...</p>
+                        </div>
+                    </div>
 
-        async function handleForgotPassword() {
-            const email = document.getElementById('emailLogin')?.value?.trim();
-            if (!email) {
-                showAlert('Ingresa tu email primero', 'warning');
-                return;
-            }
+                    <div id="camposCapacitacion" style="display: none;">
+                        <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+                            <h4 style="margin-bottom: 15px; color: var(--text-primary);">👥 Datos de Capacitación</h4>
+                            <p style="color: var(--text-secondary);">Campos en desarrollo...</p>
+                        </div>
+                    </div>
 
-            showLoader(true);
-            try {
-                await auth.sendPasswordResetEmail(email);
-                showAlert('Email enviado. Revisa tu bandeja.', 'success');
-            } catch (error) {
-                showAlert(getErrorMessage(error.code), 'error');
-            } finally {
-                showLoader(false);
-            }
-        }
+                    <div id="camposDesarrolloJuridico" style="display: none;">
+                        <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+                            <h4 style="margin-bottom: 15px; color: var(--text-primary);">⚖️ Datos de Desarrollo Jurídico</h4>
+                            <p style="color: var(--text-secondary);">Campos en desarrollo...</p>
+                        </div>
+                    </div>
 
-        async function handleLogout() {
-            try {
-                await auth.signOut();
-                showAlert('Sesión cerrada', 'success');
-            } catch (error) {
-                showAlert('Error al cerrar sesión', 'error');
-            }
-        }
+                    <div id="camposRemision" style="display: none;">
+                        <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+                            <h4 style="margin-bottom: 15px; color: var(--text-primary);">🔄 Datos de Remisión</h4>
+                            <p style="color: var(--text-secondary);">Campos en desarrollo...</p>
+                        </div>
+                    </div>
 
-        // ============================================
-        // INICIALIZACIÓN
-        // ============================================
+                    <div class="form-group">
+                        <label>Notas Adicionales</label>
+                        <textarea id="diagnosticoNotas" rows="3" placeholder="Observaciones adicionales..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" onclick="window.closeAgendarModal()" class="btn btn-secondary">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-success" id="btnGuardarDiagnostico">
+                        Agendar Servicio
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 
-        function initApp() {
-            if (typeof firebase === 'undefined') {
-                renderError('Firebase no está disponible. Verifica tu conexión a Internet.');
-                return;
-            }
+    <!-- Modal Reagendar -->
+    <div id="reagendarModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>🔄 Reagendar Cita</h3>
+                <p id="reagendarInfo" style="color: var(--text-secondary); margin-top: 10px;"></p>
+            </div>
+            <form id="reagendarForm">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Motivo del Reagendamiento *</label>
+                        <textarea id="motivoReagendamiento" rows="4" required 
+                            placeholder="Explique por qué es necesario reagendar esta cita..."></textarea>
+                        <small style="color: var(--text-secondary); font-size: 12px;">Este motivo será enviado al supervisor</small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" onclick="window.closeReagendarModal()" class="btn btn-secondary">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-warning">
+                        Continuar a Selección de Fecha
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 
-            try {
-                firebase.initializeApp(firebaseConfig);
-                auth = firebase.auth();
-                db = firebase.firestore();
-                console.log('✅ Firebase inicializado');
+    <!-- Modal Rechazar Reagendamiento -->
+    <div id="rechazarModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>❌ Rechazar Reagendamiento</h3>
+                <p id="rechazarInfo" style="color: var(--text-secondary); margin-top: 10px;"></p>
+            </div>
+            <form id="rechazarForm">
+                <div class="modal-body">
+                    <div class="warning-box" style="margin-bottom: 20px;">
+                        <h4>⚠️ Importante</h4>
+                        <p>Al rechazar este reagendamiento, el gestor deberá mantener la cita en la fecha y hora programada originalmente. Esta acción no se puede deshacer.</p>
+                    </div>
+                    <div class="form-group">
+                        <label>Motivo del Rechazo *</label>
+                        <textarea id="motivoRechazo" rows="4" required 
+                            placeholder="Explique claramente por qué se rechaza el reagendamiento..."></textarea>
+                        <small style="color: var(--text-secondary); font-size: 12px;">
+                            El gestor recibirá esta notificación y deberá mantener la cita original. Sea claro y específico.
+                        </small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" onclick="window.closeRechazarModal()" class="btn btn-secondary">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-danger">
+                        ❌ Confirmar Rechazo
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 
-                auth.onAuthStateChanged(user => {
-                    currentUser = user;
-                    if (user) {
-                        renderWelcome(user);
-                    } else {
-                        renderLogin();
-                    }
-                });
-            } catch (error) {
-                console.error('Error inicializando:', error);
-                renderError('Error al inicializar: ' + error.message);
-            }
-        }
-
-        // Esperar a Firebase
-        renderLoading();
-        let attempts = 0;
-        const checkFirebase = setInterval(() => {
-            attempts++;
-            if (typeof firebase !== 'undefined') {
-                clearInterval(checkFirebase);
-                initApp();
-            } else if (attempts > 30) {
-                clearInterval(checkFirebase);
-                renderError('Firebase no pudo cargar. Verifica tu conexión a Internet.');
-            }
-        }, 100);
-    </script>
-
-    <!-- Firebase SDK - ÚNICO SCRIPT EXTERNO -->
-    <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js"></script>
-    <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js"></script>
-    <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"></script>
+    <!-- Script principal con type="module" -->
+    <script type="module" src="js/app.js"></script>
 </body>
 </html>
